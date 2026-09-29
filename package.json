@@ -1,0 +1,32 @@
+{
+  "name": "typhoon-warning-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server/index.js",
+    "dev:all": "node scripts/dev-all.mjs",
+    "test": "node --test \"tests/unit/**/*.test.js\"",
+    "test:api": "node --test \"tests/functional/**/*.test.js\"",
+    "test:all": "npm run test && npm run test:api"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "echarts": "^5.5.0",
+    "express": "^4.18.0",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^7.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "leaflet": "^1.9.4",
+    "pinia": "^2.1.0",
+    "vue": "^3.4.0",
+    "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "vite": "^5.4.0"
+  }
+}

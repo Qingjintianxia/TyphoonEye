@@ -1,0 +1,291 @@
+const typhoons = [
+  {
+    id: 'TY202401',
+    name: '海燕',
+    nameEn: 'Haiyan',
+    status: 'active',
+    level: '超强台风',
+    windSpeed: 58,
+    pressure: 925,
+    latitude: 21.5,
+    longitude: 126.8,
+    warningLevel: 'red',
+    affectedCities: ['福州', '温州', '宁波', '上海'],
+    description: '第3号台风"海燕"正在向西北方向移动，强度持续增强，预计将在福建至浙江一带沿海登陆。',
+    startTime: '2026-05-15 08:00',
+    updateTime: '2026-05-19 14:00',
+    radius7: 380,
+    radius10: 150,
+    radius12: 80,
+    path: [
+      { lat: 15.2, lng: 135.5, time: '2026-05-15 08:00', wind: 35, level: '台风' },
+      { lat: 16.8, lng: 133.2, time: '2026-05-16 08:00', wind: 42, level: '强台风' },
+      { lat: 18.5, lng: 130.6, time: '2026-05-17 08:00', wind: 50, level: '强台风' },
+      { lat: 20.0, lng: 128.5, time: '2026-05-18 08:00', wind: 55, level: '超强台风' },
+      { lat: 21.5, lng: 126.8, time: '2026-05-19 14:00', wind: 58, level: '超强台风' },
+      { lat: 23.2, lng: 124.5, time: '2026-05-20 08:00', wind: 55, level: '超强台风' },
+      { lat: 25.0, lng: 122.0, time: '2026-05-21 08:00', wind: 48, level: '强台风' },
+      { lat: 26.5, lng: 120.5, time: '2026-05-22 08:00', wind: 40, level: '台风' }
+    ]
+  },
+  {
+    id: 'TY202402',
+    name: '山竹',
+    nameEn: 'Mangkhut',
+    status: 'active',
+    level: '强台风',
+    windSpeed: 45,
+    pressure: 955,
+    latitude: 16.2,
+    longitude: 118.5,
+    warningLevel: 'orange',
+    affectedCities: ['湛江', '海口', '三亚', '北海'],
+    description: '第4号台风"山竹"正在南海中部海域向西北偏西方向移动，预计将在广东西部至海南一带登陆。',
+    startTime: '2026-05-17 02:00',
+    updateTime: '2026-05-19 14:00',
+    radius7: 320,
+    radius10: 120,
+    radius12: 60,
+    path: [
+      { lat: 12.5, lng: 125.0, time: '2026-05-17 02:00', wind: 30, level: '强热带风暴' },
+      { lat: 14.0, lng: 122.3, time: '2026-05-18 02:00', wind: 38, level: '台风' },
+      { lat: 15.2, lng: 120.0, time: '2026-05-19 08:00', wind: 43, level: '强台风' },
+      { lat: 16.2, lng: 118.5, time: '2026-05-19 14:00', wind: 45, level: '强台风' },
+      { lat: 17.5, lng: 116.0, time: '2026-05-20 08:00', wind: 42, level: '强台风' },
+      { lat: 19.0, lng: 113.5, time: '2026-05-21 08:00', wind: 38, level: '台风' },
+      { lat: 20.5, lng: 111.0, time: '2026-05-22 08:00', wind: 30, level: '强热带风暴' }
+    ]
+  },
+  {
+    id: 'TY202403',
+    name: '利奇马',
+    nameEn: 'Lekima',
+    status: 'active',
+    level: '热带风暴',
+    windSpeed: 25,
+    pressure: 992,
+    latitude: 10.8,
+    longitude: 142.3,
+    warningLevel: 'blue',
+    affectedCities: [],
+    description: '第5号台风"利奇马"正在菲律宾以东洋面生成发展，目前强度为热带风暴级。',
+    startTime: '2026-05-18 20:00',
+    updateTime: '2026-05-19 14:00',
+    radius7: 180,
+    radius10: 0,
+    radius12: 0,
+    path: [
+      { lat: 9.5, lng: 145.0, time: '2026-05-18 20:00', wind: 20, level: '热带低压' },
+      { lat: 10.2, lng: 143.5, time: '2026-05-19 08:00', wind: 23, level: '热带风暴' },
+      { lat: 10.8, lng: 142.3, time: '2026-05-19 14:00', wind: 25, level: '热带风暴' }
+    ]
+  },
+  {
+    id: 'TY202305',
+    name: '烟花',
+    nameEn: 'In-Fa',
+    status: 'historical',
+    level: '台风',
+    windSpeed: 42,
+    pressure: 960,
+    latitude: 30.2,
+    longitude: 122.1,
+    warningLevel: 'orange',
+    affectedCities: ['舟山', '宁波', '上海', '杭州'],
+    description: '2025年第5号台风"烟花"已在浙江舟山登陆，造成较大风雨影响。',
+    startTime: '2025-07-18 08:00',
+    updateTime: '2025-07-26 20:00',
+    radius7: 300,
+    radius10: 100,
+    radius12: 0,
+    path: [
+      { lat: 20.0, lng: 135.0, time: '2025-07-18 08:00', wind: 25, level: '热带风暴' },
+      { lat: 22.5, lng: 132.0, time: '2025-07-20 08:00', wind: 35, level: '台风' },
+      { lat: 25.0, lng: 128.5, time: '2025-07-22 08:00', wind: 42, level: '台风' },
+      { lat: 27.5, lng: 125.0, time: '2025-07-24 08:00', wind: 42, level: '台风' },
+      { lat: 30.2, lng: 122.1, time: '2025-07-26 08:00', wind: 35, level: '台风' },
+      { lat: 32.0, lng: 119.0, time: '2025-07-26 20:00', wind: 20, level: '热带风暴' }
+    ]
+  },
+  {
+    id: 'TY202303',
+    name: '杜苏芮',
+    nameEn: 'Doksuri',
+    status: 'historical',
+    level: '超强台风',
+    windSpeed: 62,
+    pressure: 915,
+    latitude: 24.8,
+    longitude: 118.5,
+    warningLevel: 'red',
+    affectedCities: ['泉州', '厦门', '漳州', '福州'],
+    description: '2025年第3号台风"杜苏芮"以超强台风级别在福建泉州登陆，为近十年登陆该地区最强台风。',
+    startTime: '2025-07-21 08:00',
+    updateTime: '2025-07-29 08:00',
+    radius7: 400,
+    radius10: 180,
+    radius12: 100,
+    path: [
+      { lat: 12.0, lng: 140.0, time: '2025-07-21 08:00', wind: 20, level: '热带低压' },
+      { lat: 14.5, lng: 137.0, time: '2025-07-23 08:00', wind: 35, level: '台风' },
+      { lat: 17.0, lng: 133.0, time: '2025-07-25 08:00', wind: 52, level: '超强台风' },
+      { lat: 20.0, lng: 128.0, time: '2025-07-27 08:00', wind: 62, level: '超强台风' },
+      { lat: 22.5, lng: 123.0, time: '2025-07-28 08:00', wind: 55, level: '超强台风' },
+      { lat: 24.8, lng: 118.5, time: '2025-07-29 08:00', wind: 30, level: '强热带风暴' }
+    ]
+  },
+  {
+    id: 'TY202402H',
+    name: '梅花',
+    nameEn: 'Muifa',
+    status: 'historical',
+    level: '强台风',
+    windSpeed: 50,
+    pressure: 940,
+    latitude: 29.5,
+    longitude: 122.0,
+    warningLevel: 'red',
+    affectedCities: ['上海', '宁波', '舟山', '南通'],
+    description: '2025年第12号台风"梅花"在上海沿海擦过北上，给长三角地区带来严重风雨影响。',
+    startTime: '2025-09-08 08:00',
+    updateTime: '2025-09-15 08:00',
+    radius7: 350,
+    radius10: 140,
+    radius12: 70,
+    path: [
+      { lat: 18.0, lng: 138.0, time: '2025-09-08 08:00', wind: 25, level: '热带风暴' },
+      { lat: 21.0, lng: 133.0, time: '2025-09-10 08:00', wind: 40, level: '台风' },
+      { lat: 24.0, lng: 128.0, time: '2025-09-12 08:00', wind: 50, level: '强台风' },
+      { lat: 27.0, lng: 124.5, time: '2025-09-14 08:00', wind: 50, level: '强台风' },
+      { lat: 29.5, lng: 122.0, time: '2025-09-15 08:00', wind: 38, level: '台风' }
+    ]
+  },
+  {
+    id: 'TY202401H',
+    name: '安比',
+    nameEn: 'Ampil',
+    status: 'historical',
+    level: '台风',
+    windSpeed: 38,
+    pressure: 970,
+    latitude: 22.0,
+    longitude: 114.0,
+    warningLevel: 'yellow',
+    affectedCities: ['深圳', '香港', '珠海', '广州'],
+    description: '2025年第7号台风"安比"在广东深圳附近登陆，珠江口地区出现大风暴雨。',
+    startTime: '2025-08-10 08:00',
+    updateTime: '2025-08-16 20:00',
+    radius7: 250,
+    radius10: 80,
+    radius12: 0,
+    path: [
+      { lat: 16.0, lng: 125.0, time: '2025-08-10 08:00', wind: 20, level: '热带低压' },
+      { lat: 18.5, lng: 120.0, time: '2025-08-12 08:00', wind: 30, level: '强热带风暴' },
+      { lat: 20.5, lng: 117.0, time: '2025-08-14 08:00', wind: 38, level: '台风' },
+      { lat: 22.0, lng: 114.0, time: '2025-08-16 08:00', wind: 35, level: '台风' },
+      { lat: 23.5, lng: 111.0, time: '2025-08-16 20:00', wind: 20, level: '热带风暴' }
+    ]
+  },
+  {
+    id: 'TY202302',
+    name: '泰利',
+    nameEn: 'Talim',
+    status: 'historical',
+    level: '强热带风暴',
+    windSpeed: 30,
+    pressure: 985,
+    latitude: 21.5,
+    longitude: 110.0,
+    warningLevel: 'yellow',
+    affectedCities: ['海口', '湛江', '北海', '南宁'],
+    description: '2025年第2号台风"泰利"在海南文昌至广东徐闻一带沿海登陆。',
+    startTime: '2025-06-12 08:00',
+    updateTime: '2025-06-15 08:00',
+    radius7: 200,
+    radius10: 60,
+    radius12: 0,
+    path: [
+      { lat: 15.0, lng: 118.0, time: '2025-06-12 08:00', wind: 20, level: '热带低压' },
+      { lat: 17.0, lng: 115.0, time: '2025-06-13 08:00', wind: 28, level: '强热带风暴' },
+      { lat: 19.0, lng: 112.5, time: '2025-06-14 08:00', wind: 30, level: '强热带风暴' },
+      { lat: 21.5, lng: 110.0, time: '2025-06-15 08:00', wind: 25, level: '热带风暴' }
+    ]
+  }
+]
+
+const alerts = [
+  {
+    id: 'ALT001',
+    typhoonId: 'TY202401',
+    level: 'red',
+    title: '台风红色预警',
+    content: '超强台风"海燕"预计将于48小时内影响福建至浙江沿海，中心最大风力17级以上，请沿海地区做好防台防汛准备。',
+    publishTime: '2026-05-19 14:00',
+    city: '福州'
+  },
+  {
+    id: 'ALT002',
+    typhoonId: 'TY202401',
+    level: 'red',
+    title: '台风红色预警',
+    content: '超强台风"海燕"逼近，温州沿海将出现6-8米巨浪，请沿海居民立即转移到安全地带。',
+    publishTime: '2026-05-19 12:00',
+    city: '温州'
+  },
+  {
+    id: 'ALT003',
+    typhoonId: 'TY202402',
+    level: 'orange',
+    title: '台风橙色预警',
+    content: '强台风"山竹"正在逼近南海北部，预计未来24小时内将在广东西部至海南东部沿海登陆。',
+    publishTime: '2026-05-19 14:00',
+    city: '湛江'
+  },
+  {
+    id: 'ALT004',
+    typhoonId: 'TY202402',
+    level: 'orange',
+    title: '台风橙色预警',
+    content: '强台风"山竹"预计影响海南岛，海口市将有10-12级大风，伴有暴雨到大暴雨。',
+    publishTime: '2026-05-19 10:00',
+    city: '海口'
+  },
+  {
+    id: 'ALT005',
+    typhoonId: 'TY202403',
+    level: 'blue',
+    title: '台风蓝色预警',
+    content: '热带风暴"利奇马"正在菲律宾以东洋面发展，目前距离我国尚远，请持续关注最新预报。',
+    publishTime: '2026-05-19 08:00',
+    city: '关岛'
+  },
+  {
+    id: 'ALT006',
+    typhoonId: 'TY202401',
+    level: 'yellow',
+    title: '台风黄色预警',
+    content: '超强台风"海燕"外围环流将影响宁波地区，预计将出现8-10级大风和暴雨。',
+    publishTime: '2026-05-19 08:00',
+    city: '宁波'
+  },
+  {
+    id: 'ALT101',
+    typhoonId: 'TY202305',
+    level: 'red',
+    title: '台风红色预警(已解除)',
+    content: '台风"烟花"已在浙江舟山登陆，预计将继续向西北方向移动，强度逐渐减弱。',
+    publishTime: '2025-07-25 08:00',
+    city: '舟山'
+  },
+  {
+    id: 'ALT102',
+    typhoonId: 'TY202303',
+    level: 'red',
+    title: '台风红色预警(已解除)',
+    content: '超强台风"杜苏芮"即将在泉州沿海登陆，这是近十年登陆福建的最强台风，请全力做好防御。',
+    publishTime: '2025-07-28 06:00',
+    city: '泉州'
+  }
+]
+
+module.exports = { typhoons, alerts }

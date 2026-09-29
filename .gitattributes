@@ -1,0 +1,15 @@
+# 二进制产物不参与文本 diff / 不做换行规范化
+*.pdf binary
+*.png binary
+*.jpg binary
+*.ico binary
+
+# 源码统一 LF 入库，检出时按平台换行
+*.js   text eol=lf
+*.mjs  text eol=lf
+*.vue  text eol=lf
+*.css  text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+*.html text eol=lf
+*.bat  text eol=crlf

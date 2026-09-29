@@ -1,0 +1,46 @@
+# 依赖
+node_modules/
+
+# 构建产物
+dist/
+
+# 本地环境变量（含天地图密钥、JWT 密钥，禁止外发）
+.env
+.env.local
+.env.*.local
+
+# 运行时数据（注册用户等，含密码散列）
+server/data/users.json
+server/data/users.json.tmp
+
+# 运行时业务数据（工单、通知）
+server/data/tickets.json
+server/data/tickets.json.tmp
+server/data/notifications.json
+server/data/notifications.json.tmp
+
+# 日志
+*.log
+npm-debug.log*
+
+# 运行时数据（DATA_DIR 指向根目录 data/ 时产生，含密码散列）
+/data/
+
+# 本地密钥备忘（天地图 key 明文，不入版本库）
+src/assets/tianditu.md
+
+# 生成 PDF 时的 Chrome 临时 profile
+docs/copyright/_*/
+docs/copyright/images/_*/
+
+# 本地工具状态（agent 工作区记忆与日志）
+.workbuddy/
+
+# 本地 agent 配置（含本机命令权限白名单）
+.claude/
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

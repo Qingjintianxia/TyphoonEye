@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TyphoonEye 台风预警系统 · 优化改进方案</title>
+<style>
+:root{
+  --bg:#0f1923; --bg2:#152230; --card:rgba(21,34,48,.72); --line:rgba(255,255,255,.08);
+  --line2:rgba(255,255,255,.14);
+  --t1:#e8edf2; --t2:#9fb0c0; --t3:#5a6d7e;
+  --blue:#3b82f6; --green:#10b981; --yellow:#f59e0b; --orange:#f97316; --red:#ef4444; --purple:#8b5cf6;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Inter',-apple-system,'Segoe UI','Microsoft YaHei',sans-serif;
+  background:var(--bg); color:var(--t1); line-height:1.75; font-size:14px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:48px 32px 96px}
+header{border-bottom:1px solid var(--line);padding-bottom:28px;margin-bottom:40px}
+.eyebrow{font-size:12px;letter-spacing:2px;color:var(--blue);text-transform:uppercase;font-weight:600}
+h1{font-size:30px;font-weight:700;letter-spacing:-.6px;margin:10px 0 8px}
+.lead{color:var(--t2);font-size:15px;max-width:760px}
+.meta{display:flex;gap:24px;flex-wrap:wrap;margin-top:18px;font-size:12px;color:var(--t3)}
+.meta b{color:var(--t2);font-weight:600}
+
+h2{font-size:20px;font-weight:700;margin:52px 0 6px;letter-spacing:-.3px;scroll-margin-top:24px}
+h2 .num{color:var(--blue);font-size:13px;font-weight:700;margin-right:10px;vertical-align:2px}
+h2 + .sub{color:var(--t3);font-size:13px;margin-bottom:20px}
+h3{font-size:15px;font-weight:600;margin:28px 0 10px;color:var(--t1)}
+p{margin:10px 0;color:var(--t2)}
+p strong,li strong{color:var(--t1);font-weight:600}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px 24px;margin:16px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+th{text-align:left;padding:10px 12px;font-size:11px;font-weight:600;color:var(--t3);
+   text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:11px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:var(--t2);vertical-align:top}
+tr:hover td{background:rgba(255,255,255,.02)}
+td code,th code{background:rgba(255,255,255,.06);padding:1px 6px;border-radius:4px;
+   font-family:'JetBrains Mono',Consolas,monospace;font-size:12px;color:#a5d6ff;white-space:nowrap}
+
+.tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.t-p0{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.35)}
+.t-p1{background:rgba(249,115,22,.15);color:#fb923c;border:1px solid rgba(249,115,22,.35)}
+.t-p2{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.35)}
+.t-p3{background:rgba(139,92,246,.15);color:#a78bfa;border:1px solid rgba(139,92,246,.35)}
+.t-ok{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.35)}
+.t-mid{background:rgba(245,158,11,.15);color:#fbbf24;border:1px solid rgba(245,158,11,.35)}
+.t-low{background:rgba(16,185,129,.15);color:#34d399;border:1px solid rgba(16,185,129,.35)}
+.t-high{background:rgba(239,68,68,.15);color:#f87171;border:1px solid rgba(239,68,68,.35)}
+
+ul{margin:8px 0 8px 20px;color:var(--t2)}
+li{margin:5px 0}
+ol{margin:8px 0 8px 20px;color:var(--t2)}
+ol li{margin:6px 0}
+
+.phase{border-left:3px solid var(--blue);padding-left:20px;margin:24px 0}
+.phase.p0{border-color:var(--red)} .phase.p1{border-color:var(--orange)}
+.phase.p2{border-color:var(--blue)} .phase.p3{border-color:var(--purple)}
+.phase-h{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px}
+.phase-h h3{margin:0;font-size:17px}
+.phase-d{font-size:12px;color:var(--t3)}
+
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0}
+.kpi div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.kpi .v{font-size:26px;font-weight:700;letter-spacing:-1px;line-height:1.2}
+.kpi .l{font-size:12px;color:var(--t3);margin-top:2px}
+.kpi .r{color:var(--red)} .kpi .b{color:var(--blue)} .kpi .o{color:var(--orange)} .kpi .g{color:var(--green)}
+
+.arch{border:1px solid var(--line);border-radius:12px;padding:22px;background:var(--card);margin:16px 0}
+.layer{margin-bottom:14px}
+.layer-label{font-size:12px;color:var(--t3);margin-bottom:8px;letter-spacing:.5px}
+.layer-boxes{display:flex;gap:10px;flex-wrap:wrap}
+.lb{flex:1;min-width:150px;border:1px solid var(--line2);border-radius:8px;padding:12px 14px;background:rgba(255,255,255,.02)}
+.lb b{display:block;font-size:13px;font-weight:600;margin-bottom:3px}
+.lb span{font-size:11.5px;color:var(--t3);line-height:1.5}
+.lb.a{border-color:rgba(239,68,68,.3)} .lb.a b{color:#f87171}
+.lb.b{border-color:rgba(249,115,22,.3)} .lb.b b{color:#fb923c}
+.lb.c{border-color:rgba(59,130,246,.3)} .lb.c b{color:#60a5fa}
+.ardown{text-align:center;color:var(--t3);font-size:16px;line-height:1;margin:8px 0}
+
+.callout{border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.07);border-radius:10px;padding:16px 20px;margin:16px 0}
+.callout.warn{border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.07)}
+.callout.info{border-color:rgba(59,130,246,.35);background:rgba(59,130,246,.07)}
+.callout .ct{font-size:13px;font-weight:600;margin-bottom:6px;color:var(--t1)}
+.callout p{margin:4px 0;font-size:13px}
+
+.roadmap{display:flex;flex-direction:column;gap:0;margin:20px 0}
+.rm{display:flex;gap:16px;position:relative;padding-bottom:22px}
+.rm:last-child{padding-bottom:0}
+.rm::before{content:'';position:absolute;left:11px;top:26px;bottom:0;width:1px;background:var(--line2)}
+.rm:last-child::before{display:none}
+.rm-dot{width:23px;height:23px;border-radius:50%;flex-shrink:0;border:2px solid var(--line2);
+  background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:10px;
+  font-weight:700;color:var(--t3);z-index:1}
+.rm.on .rm-dot{border-color:var(--blue);color:var(--blue);background:rgba(59,130,246,.12)}
+.rm-b{flex:1;padding-top:1px}
+.rm-b b{font-size:14px;font-weight:600}
+.rm-b .d{font-size:12px;color:var(--t3);margin:2px 0 6px}
+.rm-b ul{margin:4px 0 0 18px;font-size:13px}
+
+footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);font-size:12px;color:var(--t3)}
+@media(max-width:860px){
+  .grid2,.grid3,.kpi{grid-template-columns:1fr}
+  .wrap{padding:32px 18px 64px}
+  h1{font-size:24px}
+}
+@media print{
+  body{background:#fff;color:#111}
+  .card,.arch{border-color:#ddd;background:#fafafa}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">TyphoonEye · Technical Review</div>
+  <h1>台风预警系统优化改进方案</h1>
+  <p class="lead">对现有 Vue 3 + Express 台风预警系统的一次全面体检。结论是：<strong>骨架是对的，但停在"能跑的原型"阶段</strong>——数据全静态、无实时能力、无设计系统、无安全基线。本方案按四个阶段给出可落地的改造路径。</p>
+  <div class="meta">
+    <span><b>技术栈</b> Vue 3 + Vite + Pinia + ECharts + Leaflet / Express 4</span>
+    <span><b>规模</b> 前端 20 文件 · 后端 8 文件</span>
+    <span><b>评审日期</b> 2026-09-22</span>
+  </div>
+</header>
+
+<h2><span class="num">01</span>总体判断</h2>
+<div class="sub">先说结论，再说细节</div>
+
+<p>这套代码的优点很明确：目录分层清晰（views / components / stores / routes 各司其职），Pinia store 已按领域拆分，暗色玻璃拟态的视觉方向统一，路由守卫和 JWT 鉴权的链路是完整的。<strong>它是一份合格的课程作业或原型，但距离"预警系统"这个定位还差得远。</strong></p>
+
+<div class="kpi">
+  <div><div class="v r">0</div><div class="l">真实数据源接入</div></div>
+  <div><div class="v r">0</div><div class="l">实时推送能力</div></div>
+  <div><div class="v o">6</div><div class="l">处硬编码假数据</div></div>
+  <div><div class="v b">4×</div><div class="l">样式/常量重复拷贝</div></div>
+</div>
+
+<div class="grid3">
+  <div class="card">
+    <div class="tag t-high">致命</div>
+    <h3>名不副实的"实时"</h3>
+    <p style="font-size:13px">所有数据来自 <code>server/data/mock-data.js</code> 的内存常量，服务重启即丢，"实时监控""最新预警"均无实际含义。</p>
+  </div>
+  <div class="card">
+    <div class="tag t-high">致命</div>
+    <h3>安全基线缺失</h3>
+    <p style="font-size:13px">JWT 密钥硬编码、密码文件同步读写无锁、CORS 全开、无限流、token 存 localStorage 无刷新机制。</p>
+  </div>
+  <div class="card">
+    <div class="tag t-mid">严重</div>
+    <h3>无设计系统</h3>
+    <p style="font-size:13px">预警色板、等级映射、图标 SVG 在每个组件各抄一遍；颜色硬编码不用变量；无加载/空/错误三态统一规范。</p>
+  </div>
+</div>
+
+<h2><span class="num">02</span>问题清单</h2>
+<div class="sub">按文件定位，P0 = 必须马上修，P1 = 本迭代修，P2 = 规划中修</div>
+
+<h3>2.1 正确性与健壮性</h3>
+<table>
+<thead><tr><th style="width:70px">级别</th><th style="width:290px">位置</th><th>问题</th><th>建议</th></tr></thead>
+<tbody>
+<tr><td><span class="tag t-p0">P0</span></td><td><code>src/views/TyphoonMonitor.vue:52</code></td><td><code>t.latitude.toFixed(1)</code> 未做空值防御，历史台风或缺坐标数据直接白屏</td><td>统一 <code>formatCoord()</code> 工具函数 + 可选链</td></tr>
+<tr><td><span class="tag t-p0">P0</span></td><td><code>src/views/TyphoonDetail.vue:152</code></td><td>仅在 <code>onMounted</code> 拉一次，<code>route.params.id</code> 变化不重新请求；离开页面不清空 <code>currentTyphoon</code>，二次进入闪旧数据</td><td><code>watch(() =&gt; route.params.id)</code> + <code>onUnmounted</code> 重置</td></tr>
+<tr><td><span class="tag t-p0">P0</span></td><td><code>src/views/Dashboard.vue:136</code></td><td><code>fetch</code> 无 <code>catch</code>，网络失败静默；store 里同样只有 <code>try/finally</code>，接口 401 时页面显示 0 且无提示</td><td>统一请求层 + 401 全局拦截 + Toast</td></tr>
+<tr><td><span class="tag t-p0">P0</span></td><td><code>src/router/index.js:53</code></td><td>守卫只判断 token <em>是否存在</em>，过期 token 仍放行，进入内页后才被 <code>fetchMe</code> 踢出，出现闪烁</td><td>守卫中解析 JWT <code>exp</code> 或先 <code>await fetchMe()</code></td></tr>
+<tr><td><span class="tag t-p1">P1</span></td><td><code>server/routes/alerts.js:11</code></td><td><code>new Date('2026-05-19 14:00')</code> 在严格 ISO 环境解析为 <code>Invalid Date</code>，排序失效</td><td>时间统一存 ISO 8601（<code>2026-05-19T14:00:00+08:00</code>）</td></tr>
+<tr><td><span class="tag t-p1">P1</span></td><td><code>src/components/Charts.vue:48</code></td><td><code>setOption(val, true)</code> 使用 notMerge，把初始化时设的 <code>textStyle</code> / <code>backgroundColor</code> 一并覆盖掉</td><td>合并更新，或把主题合并进 option 计算属性</td></tr>
+<tr><td><span class="tag t-p1">P1</span></td><td><code>src/components/AppLayout.vue:77</code></td><td>同时用了 <code>@click.outside</code> 和手动 <code>document.addEventListener</code>，两套关闭逻辑并存</td><td>只保留一种</td></tr>
+<tr><td><span class="tag t-p2">P2</span></td><td>全项目</td><td>无 404 路由、无错误边界、无全局异常上报</td><td>加 catch-all 路由 + <code>onErrorCaptured</code></td></tr>
+</tbody>
+</table>
+
+<h3>2.2 数据真实性：页面上的假数据</h3>
+<div class="callout warn">
+  <div class="ct">这一条最影响可信度</div>
+  <p>以下数字与后端数据完全无关，是写死在前端/后端的常量。演示时任何一次数据改动都会让图表自相矛盾。</p>
+</div>
+<ul>
+  <li><code>Dashboard.vue:8,15,22,29</code> — 四张 StatCard 的 <code>:trend</code> 分别是写死的 12 / 8 / 25 / -5，"较昨日"是假的。</li>
+  <li><code>server/routes/statistics.js:14-36</code> — <code>monthlyData</code> 与 <code>levelDistribution</code> 硬编码，不随台风数据变化。</li>
+  <li><code>HistoryView.vue:76-83</code> — 年度强度分布饼图数据硬编码；<code>:92,:104</code> — 2018–2025 趋势线硬编码。</li>
+  <li><code>HistoryView.vue:11</code> — 写死"2025年度"，而 mock 数据里已有 2026 年的台风。</li>
+</ul>
+<p><strong>建议：</strong>统计口径全部下沉到服务端聚合（或至少由 mock 数据实时计算），前端只负责渲染。同时引入"数据更新时间"字段并在 UI 显式展示，避免用户误判新鲜度。</p>
+
+<h3>2.3 安全与合规</h3>
+<table>
+<thead><tr><th style="width:70px">级别</th><th style="width:290px">位置</th><th>问题</th><th>建议</th></tr></thead>
+<tbody>
+<tr><td><span class="tag t-p0">P0</span></td><td><code>server/middleware/auth.js:3</code></td><td>JWT 密钥硬编码为 <code>'typhoon-eye-secret-key-2026'</code>，一旦源码泄露即可伪造任意 token</td><td>改 <code>process.env.JWT_SECRET</code>，启动时校验非空，缺失直接退出</td></tr>
+<tr><td><span class="tag t-p0">P0</span></td><td><code>server/routes/auth.js:43,72</code></td><td><code>bcrypt.hashSync / compareSync</code> 是同步 API，阻塞 Node 事件循环</td><td>改为 <code>await bcrypt.hash(pw, 10)</code></td></tr>
+<tr><td><span class="tag t-p0">P0</span></td><td><code>server/routes/auth.js:11-17</code></td><td>用户 JSON 文件 <code>readFileSync/writeFileSync</code> 无锁，并发注册会整文件覆盖丢失</td><td>换 SQLite/Postgres；短期用 <code>write-file-atomic</code> + 内存互斥队列</td></tr>
+<tr><td><span class="tag t-p0">P0</span></td><td><code>server/index.js:8</code></td><td><code>cors()</code> 全开、无 helmet、无登录限流</td><td>CORS 白名单 + <code>helmet()</code> + <code>express-rate-limit</code></td></tr>
+<tr><td><span class="tag t-p1">P1</span></td><td><code>src/stores/auth.js:20</code></td><td>token 存 localStorage，XSS 可直接窃取；7 天有效期且无刷新、无登出黑名单</td><td>短期：access + refresh 双 token，access 存内存；长期：httpOnly Cookie</td></tr>
+<tr><td><span class="tag t-p1">P1</span></td><td>全后端</td><td>业务失败也返回 HTTP 200（<code>res.json({code:400})</code>），无法用状态码做监控与重试</td><td>HTTP 状态码与业务码分离，错误统一 <code>AppError</code> + 中间件</td></tr>
+<tr><td><span class="tag t-p1">P1</span></td><td>全后端</td><td>无入参校验层，<code>req.body</code> 直接取用</td><td>引入 <code>zod</code> 校验中间件</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+  <div class="ct">地图使用合规（必须处理）</div>
+  <p><code>TyphoonMap.vue:55</code> 使用的是境外底图服务 <code>basemaps.cartocdn.com</code>。在国内提供地图服务涉及测绘资质与地图内容审查，境外底图在中国海域、国界线、台湾及南海诸岛的画法上普遍不符合国家标准。</p>
+  <p style="margin-top:8px"><strong>建议：改为国内合规地图服务（天地图 / 高德 / 百度），并确保国界线完整、台湾与南海诸岛标注符合国家标准。这不是技术选型问题，是上线前置条件。</strong></p>
+</div>
+
+<h3>2.4 性能</h3>
+<table>
+<thead><tr><th style="width:70px">级别</th><th style="width:290px">位置</th><th>问题</th><th>影响</th></tr></thead>
+<tbody>
+<tr><td><span class="tag t-p0">P0</span></td><td><code>Charts.vue:12</code></td><td><code>import * as echarts from 'echarts'</code> 全量引入</td><td>打包体积 +1MB 以上</td></tr>
+<tr><td><span class="tag t-p1">P1</span></td><td><code>Charts.vue:48</code></td><td><code>deep: true</code> 监听大 option 对象 + notMerge 全量重绘</td><td>数据频繁更新时掉帧</td></tr>
+<tr><td><span class="tag t-p1">P1</span></td><td><code>Charts.vue:34</code></td><td>只监听 <code>window.resize</code>，容器自身尺寸变化（侧栏折叠、卡片布局变化）不触发</td><td>图表宽度错位</td></tr>
+<tr><td><span class="tag t-p1">P1</span></td><td><code>TyphoonMap.vue:63-65,140</code></td><td>每次 <code>typhoons</code> 变化就 <code>removeLayer</code> 全部 + 全量重建；deep watch 任意字段变更都触发</td><td>实时刷新场景下地图反复闪烁重建</td></tr>
+<tr><td><span class="tag t-p1">P1</span></td><td><code>AppLayout.vue:132</code></td><td><code>alertCount</code> 双重循环 O(n²) 且每帧重算</td><td>数据量增大后明显</td></tr>
+<tr><td><span class="tag t-p1">P1</span></td><td><code>vite.config.js</code></td><td>未配置 <code>build.rollupOptions.manualChunks</code>，vue + echarts + leaflet 打进一个 chunk</td><td>首屏白屏时间长</td></tr>
+<tr><td><span class="tag t-p2">P2</span></td><td>列表页</td><td>接口已返回 <code>total</code> 但前端一次性渲染全部，无分页 / 虚拟滚动</td><td>历史数据增长后卡顿</td></tr>
+<tr><td><span class="tag t-p2">P2</span></td><td><code>index.html:7</code> / <code>global.css:1</code></td><td>Leaflet CSS 走 unpkg CDN、Inter 字体走 Google Fonts CDN，国内不可达或极慢</td><td>样式加载失败 / 字体回退闪烁</td></tr>
+</tbody>
+</table>
+
+<h3>2.5 风格与工程化</h3>
+<ul>
+  <li><strong>重复代码严重：</strong><code>warn-blue/yellow/orange/red</code> 四个色样式在 <code>TyphoonTable</code>、<code>AlertPanel</code>、<code>AlertCenter</code>、<code>TyphoonMonitor</code> 各抄一遍；<code>levelMap</code>（等级→badge）复制 3 份；<code>warningLabel()</code> 复制 4 份；<code>authHeaders()</code> 在三个 store 各写一遍。改一个颜色要动 4 个文件。</li>
+  <li><strong>无设计 token：</strong>颜色除 <code>global.css</code> 的变量外，大量 <code>#3b82f6</code>、<code>#0f1923</code>、<code>#8899aa</code> 直接硬编码在组件和 ECharts option 里；字号、间距、圆角没有 scale，全靠手感。</li>
+  <li><strong>交互缺失：</strong>表格无排序/分页；详情页风圈用固定像素圆环（<code>r7=160px</code>、<code>r10=120px</code>、<code>r12=80px</code>），半径比例与实际数值无关，视觉误导严重；无骨架屏；表格行 <code>@click</code> 不能键盘访问；无 focus / aria 属性。</li>
+  <li><strong>响应式缺失：</strong>侧边栏固定 240px，768px 以下不折叠；<code>body{overflow:hidden}</code> + 固定 100vh 在移动端体验很差；地图 <code>min-height:500px</code> 与 flex 布局冲突。</li>
+  <li><strong>工程化为零：</strong>无 TypeScript、无 ESLint / Prettier、无测试、无 CI、无 <code>.env.example</code>、无 <code>.gitignore</code>、无 README、无日志中间件、无健康检查接口。前后端需手动分别启动两个终端。</li>
+  <li><strong>详情页最大缺陷：</strong>台风详情页只有表格和文字时间线，<strong>没有地图</strong>。对一个台风系统来说这是最该有的东西。</li>
+</ul>
+
+<h2><span class="num">03</span>目标架构</h2>
+<div class="sub">从"静态展示"升级为"采集 → 判定 → 推送 → 处置"的闭环</div>
+
+<div class="arch">
+  <div class="layer">
+    <div class="layer-label">数据接入层 · 新增</div>
+    <div class="layer-boxes">
+      <div class="lb a"><b>官方数据源抓取</b><span>中央气象台 / NOAA / JMA 定时拉取</span></div>
+      <div class="lb a"><b>调度与增量更新</b><span>node-cron，按台风编号去重合并</span></div>
+      <div class="lb a"><b>清洗与持久化</b><span>替换内存 mock，落 SQLite / Postgres</span></div>
+    </div>
+  </div>
+  <div class="ardown">↓</div>
+  <div class="layer">
+    <div class="layer-label">服务层 · 增强</div>
+    <div class="layer-boxes">
+      <div class="lb b"><b>REST API</b><span>统一响应、错误码、入参校验</span></div>
+      <div class="lb b"><b>预警规则引擎</b><span>阈值 + 地理围栏自动判定</span></div>
+      <div class="lb b"><b>实时推送</b><span>WebSocket / SSE + 订阅</span></div>
+      <div class="lb b"><b>权限与审计</b><span>角色、操作留痕</span></div>
+    </div>
+  </div>
+  <div class="ardown">↓</div>
+  <div class="layer">
+    <div class="layer-label">前端应用层 · 重构</div>
+    <div class="layer-boxes">
+      <div class="lb c"><b>统一状态与请求层</b><span>缓存、重试、401 拦截</span></div>
+      <div class="lb c"><b>地图与图表</b><span>按需加载、增量渲染</span></div>
+      <div class="lb c"><b>预警处置工作台</b><span>签收、流转、导出</span></div>
+    </div>
+  </div>
+</div>
+
+<h2><span class="num">04</span>功能扩展：从"能看"到"能用"</h2>
+<div class="sub">针对"功能单一"的核心补充，按投入产出比排序</div>
+
+<table>
+<thead><tr><th style="width:190px">功能</th><th style="width:80px">优先级</th><th style="width:88px">复杂度</th><th>价值说明</th></tr></thead>
+<tbody>
+<tr><td><strong>预警规则引擎</strong></td><td><span class="tag t-p0">P0</span></td><td><span class="tag t-mid">中</span></td><td>让预警<em>被计算出来</em>而不是写死：风力阈值、距离阈值、移动方向、预计登陆时间触发不同等级。这是"预警系统"与"数据看板"的分界线</td></tr>
+<tr><td><strong>实时数据通道</strong></td><td><span class="tag t-p0">P0</span></td><td><span class="tag t-mid">中</span></td><td>WebSocket 或 SSE 推送台风位置更新与新增预警，前端自动刷新；无新数据时降级为 30s 轮询</td></tr>
+<tr><td><strong>详情页地图</strong></td><td><span class="tag t-p0">P0</span></td><td><span class="tag t-low">低</span></td><td>台风详情直接内嵌单台风路径图 + 风圈叠加，成本极低但体感提升最大</td></tr>
+<tr><td><strong>风圈半径可视化</strong></td><td><span class="tag t-p1">P1</span></td><td><span class="tag t-mid">中</span></td><td>7/10/12 级风圈按真实比例画到地图上（现在是固定像素圆环，比例失真）</td></tr>
+<tr><td><strong>地理围栏与影响判定</strong></td><td><span class="tag t-p1">P1</span></td><td><span class="tag t-mid">中</span></td><td>用户订阅关注城市，系统判定台风风圈是否覆盖该点并给出预计影响时间与强度</td></tr>
+<tr><td><strong>预警通知与推送</strong></td><td><span class="tag t-p1">P1</span></td><td><span class="tag t-mid">中</span></td><td>红色预警站内强提醒 + 声音；可扩展邮件 / 企业微信 / Webhook</td></tr>
+<tr><td><strong>预警处置闭环</strong></td><td><span class="tag t-p1">P1</span></td><td><span class="tag t-mid">中</span></td><td>预警状态流转：发布 → 已签收 → 处置中 → 已解除，带责任人与处置记录。让系统真正可被值班流程使用</td></tr>
+<tr><td><strong>多机构预报路径对比</strong></td><td><span class="tag t-p2">P2</span></td><td><span class="tag t-high">高</span></td><td>同一台风叠加 CMA / JMA / JTWC 预报路径与集合预报扇形，专业度跃升</td></tr>
+<tr><td><strong>历史数据检索</strong></td><td><span class="tag t-p2">P2</span></td><td><span class="tag t-low">低</span></td><td>按年份 / 强度 / 登陆地 / 名称搜索 + 排序 + 分页，当前只能全量浏览</td></tr>
+<tr><td><strong>导出与报表</strong></td><td><span class="tag t-p2">P2</span></td><td><span class="tag t-low">低</span></td><td>CSV / Excel 导出、台风过程报告一键生成（PDF）</td></tr>
+<tr><td><strong>角色与权限</strong></td><td><span class="tag t-p2">P2</span></td><td><span class="tag t-mid">中</span></td><td>管理员 / 值班员 / 只读访客；发布与处置操作需权限与审计</td></tr>
+<tr><td><strong>主题切换与移动端</strong></td><td><span class="tag t-p2">P2</span></td><td><span class="tag t-low">低</span></td><td>深色之外提供浅色主题；侧栏可折叠，小屏改为底部导航</td></tr>
+</tbody>
+</table>
+
+<h2><span class="num">05</span>改造路线图</h2>
+<div class="sub">四个阶段，可独立交付；P0 完成后系统即可对外演示</div>
+
+<div class="roadmap">
+  <div class="rm on">
+    <div class="rm-dot">P0</div>
+    <div class="rm-b">
+      <b>止血与夯实</b>
+      <div class="d">3–5 人日 · 目标：系统可信、不崩、不掉链子</div>
+      <ul>
+        <li>修掉 2.1 表中的全部 P0 缺陷（空值、路由守卫、请求异常、详情重取）</li>
+        <li>安全基线：JWT 密钥环境变量化、bcrypt 异步、文件写入加锁、CORS 白名单 + helmet + 限流</li>
+        <li>清掉所有硬编码假数据，统计口径改为服务端实时聚合</li>
+        <li>底图切换为国内合规地图服务</li>
+        <li>详情页补上单台风地图</li>
+      </ul>
+    </div>
+  </div>
+  <div class="rm">
+    <div class="rm-dot">P1</div>
+    <div class="rm-b">
+      <b>工程化与设计系统</b>
+      <div class="d">8–12 人日 · 目标：能长期维护、视觉统一</div>
+      <ul>
+        <li>建立设计 token（颜色 / 字号 / 间距 / 圆角 / 阴影 / 动效时长）与语义色板</li>
+        <li>抽取公共组件：<code>LevelBadge</code>、<code>WarningTag</code>、<code>StatCard</code>、<code>DataTable</code>、<code>EmptyState</code>、<code>Skeleton</code>、<code>Toast</code></li>
+        <li>抽取常量与工具：<code>constants/typhoon.js</code>、<code>utils/format.js</code>、统一 request 封装（含 401 拦截、超时、重试）</li>
+        <li>ECharts 按需引入 + ResizeObserver + 合并更新；Leaflet 图层增量 diff</li>
+        <li>引入 ESLint / Prettier / Vitest；补 <code>.env.example</code>、<code>.gitignore</code>、README；<code>npm run dev</code> 一键起前后端（concurrently）</li>
+        <li>响应式改造：侧栏折叠、移动端布局、表格卡片化</li>
+      </ul>
+    </div>
+  </div>
+  <div class="rm">
+    <div class="rm-dot">P2</div>
+    <div class="rm-b">
+      <b>核心能力建设</b>
+      <div class="d">20–30 人日 · 目标：真正成为"预警系统"</div>
+      <ul>
+        <li>数据接入层：定时抓取官方数据源 + 清洗入库，替换 mock</li>
+        <li>预警规则引擎（阈值 / 距离 / 地理围栏）+ 预警自动生成与等级判定</li>
+        <li>WebSocket 实时推送 + 前端订阅更新；红色预警强提醒</li>
+        <li>预警处置闭环：签收、流转、处置记录、审计日志</li>
+        <li>风圈按真实比例在地图上渲染；预报路径与实况路径区分展示</li>
+        <li>历史检索（筛选 / 排序 / 分页）与 CSV 导出</li>
+      </ul>
+    </div>
+  </div>
+  <div class="rm">
+    <div class="rm-dot">P3</div>
+    <div class="rm-b">
+      <b>平台化与稳定性</b>
+      <div class="d">持续迭代 · 目标：可上生产</div>
+      <ul>
+        <li>TypeScript 迁移（渐进式，先 <code>&lt;script setup lang="ts"&gt;</code> 新文件）</li>
+        <li>单元测试 + E2E + GitHub Actions CI；Docker 化部署</li>
+        <li>接口监控与告警、结构化日志、健康检查与就绪探针</li>
+        <li>角色权限体系、多机构预报对比、集合预报</li>
+        <li>PWA 离线缓存、主题切换、国际化</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<h2><span class="num">06</span>UI 风格改造要点</h2>
+<div class="sub">现有暗色方向是对的，问题是"没有规范"</div>
+
+<div class="grid2">
+  <div class="card">
+    <h3>建立语义色板</h3>
+    <p style="font-size:13px">现在 <code>blue/yellow/orange/red</code> 既是台风等级色又是预警等级色，语义混用。应拆成两套：</p>
+    <ul style="font-size:13px">
+      <li><strong>预警信号色</strong>（蓝黄橙红）——严格对应国内气象预警四色标准，这是用户唯一需要条件反射识别的色系</li>
+      <li><strong>强度色</strong>（热带低压→超强台风）——用低饱和的连续色阶，与预警色区分开</li>
+      <li>组件内禁止写十六进制，一律走 CSS 变量</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>补齐三态规范</h3>
+    <p style="font-size:13px">当前只有一行"加载中..."。需要统一的：</p>
+    <ul style="font-size:13px">
+      <li><strong>Skeleton</strong> — 卡片与表格首屏骨架屏</li>
+      <li><strong>EmptyState</strong> — 带图标与引导动作的空态</li>
+      <li><strong>ErrorState</strong> — 带重试按钮的错误态</li>
+      <li>全局 Toast 与确认弹窗</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>信息与密度分层</h3>
+    <p style="font-size:13px">当前所有信息同一权重：仪表盘四张卡、两个图、一个表、一个列表平均用力。建议：</p>
+    <ul style="font-size:13px">
+      <li>顶部放"当前最紧急的事"——活跃台风中最强的一个 + 最高预警</li>
+      <li>时间统一相对化（"12 分钟前更新"）并标注数据新鲜度</li>
+      <li>数字用等宽字体对齐，避免跳动</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>去掉失真的装饰</h3>
+    <ul style="font-size:13px">
+      <li>风圈圆环改为按真实半径比例绘制，并叠加到地图上</li>
+      <li><code>stat-glow</code> 光晕、<code>backdrop-filter</code> 在列表项上大规模使用会拖慢滚动，只在浮层上保留</li>
+      <li>动画时长统一，尊重 <code>prefers-reduced-motion</code></li>
+    </ul>
+  </div>
+</div>
+
+<h2><span class="num">07</span>验收指标</h2>
+<div class="sub">改造完成后应当可量化验证</div>
+<table>
+<thead><tr><th style="width:220px">指标</th><th style="width:120px">当前</th><th style="width:120px">目标</th></tr></thead>
+<tbody>
+<tr><td>首屏 JS 体积（gzip）</td><td>约 1.1 MB</td><td>&lt; 350 KB</td></tr>
+<tr><td>硬编码假数据处数</td><td>6</td><td>0</td></tr>
+<tr><td>预警色板定义处</td><td>4 处重复</td><td>1 处（token）</td></tr>
+<tr><td>数据更新方式</td><td>无</td><td>自动抓取 + 推送</td></tr>
+<tr><td>移动端可用性</td><td>不可用</td><td>768px 以下完整可用</td></tr>
+<tr><td>单元测试覆盖率</td><td>0</td><td>核心逻辑 ≥ 60%</td></tr>
+<tr><td>安全基线</td><td>密钥硬编码</td><td>全部走环境变量 + 限流</td></tr>
+</tbody>
+</table>
+
+<div class="callout info">
+  <div class="ct">建议的起步动作</div>
+  <p>不要一上来就做 P2 的数据抓取。先把 <strong>P0 全部 + P1 的设计系统抽取</strong>做完——这两步做完之后，后面每加一个功能都只需要写一次；否则现在加得越多，将来重构的沉没成本越高。</p>
+</div>
+
+<footer>
+  TyphoonEye 优化改进方案 · 基于对 26 个源文件的逐行评审生成 · 2026-09-22
+</footer>
+
+</div>
+</body>
+</html>
