@@ -3,7 +3,7 @@
  *
  * 约定：
  * - 列表的筛选条件由调用方传入并保存在 filters 中，页面直接双向绑定即可。
- * - 写操作（建单 / 流转 / 意见）成功后原地替换数组项，不整列表重拉，避免闪烁。
+ * - 写操作（建单 / 流转 / 意见）成功后原地替换数组项，不整列表重拉。
  * - 状态机校验只在后端做最终裁决；前端 nextStatuses() 只负责按钮渲染。
  */
 import { defineStore } from 'pinia'
@@ -30,7 +30,7 @@ export const useTicketStore = defineStore('ticket', () => {
 
   /**
    * 按预警 ID 查找未闭环工单。
-   * 预警卡片据此把按钮切换为"查看工单"，从源头避免重复建单报错。
+   * 预警卡片据此把按钮切换为“查看工单”。
    */
   const openTicketByAlertId = computed(() => (alertId) =>
     tickets.value.find((t) => t.alertId === alertId && t.status !== TICKET_STATUS.CLOSED) || null

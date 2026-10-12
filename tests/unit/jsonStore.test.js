@@ -4,8 +4,8 @@
  * JSON 持久层单元测试
  *
  * 两件事必须证明：
- * 1. 脏数据/缺文件不会让接口 500（兜底返回 fallback）；
- * 2. 并发 mutate 不丢数据（写锁真的在工作）。
+ * 脏数据与缺文件返回 fallback，不让接口 500。
+ * 并发 mutate 不丢数据。
  */
 const test = require('node:test')
 const assert = require('node:assert/strict')

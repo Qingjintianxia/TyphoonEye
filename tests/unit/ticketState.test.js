@@ -4,7 +4,7 @@
  * 工单状态机单元测试
  *
  * 前端 UI 的禁用按钮与后端的最终裁决共用这一张转移表，
- * 因此这里穷举 from × to，确保没漏也没多。
+ * 这里穷举 from × to 逐一校验。
  */
 const test = require('node:test')
 const assert = require('node:assert/strict')

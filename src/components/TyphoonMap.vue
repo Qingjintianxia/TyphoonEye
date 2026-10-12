@@ -27,7 +27,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import L from 'leaflet'
-// 底图创建与切换统一走 config/map.js，本组件不再自行拼装 tileLayer
+// 底图创建与切换由 config/map.js 提供
 import {
   HAS_COMPLIANT_MAP,
   MAP_ATTRIBUTION,
@@ -111,7 +111,7 @@ function initMap() {
     center: [22, 125],
     zoom: 5,
     zoomControl: false,
-    // 版权信息由下方 .map-attribution 以项目风格渲染，关闭原生控件避免同一行重复显示两次
+    // 版权信息由下方 .map-attribution 渲染，关闭原生控件
     attributionControl: false
   })
 
@@ -124,7 +124,7 @@ function initMap() {
   L.control.scale({ imperial: false, position: 'bottomright' }).addTo(map)
 
   // 地图可能是"迟到挂载"的（父页面在数据加载完才渲染本组件）。
-  // 此时 focusCity 早已被赋值，watch 不会再触发，必须在这里补一次定位。
+// 此时 focusCity 已赋值，watch 不会再触发，这里补一次定位
   applyFocus()
 }
 

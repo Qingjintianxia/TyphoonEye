@@ -1,14 +1,12 @@
 'use strict'
 
 /**
- * 预警规则引擎
+ * 预警规则引擎，纯函数、零 I/O，输入台风与城市即可输出预警。
  *
- * 设计原则：
- * 1. 纯函数、零 I/O —— 输入台风与城市，输出预警。因而可直接单元测试。
- * 2. 幂等 —— 预警 ID 由 (台风, 城市, 规则) 确定性地生成。接口每次实时派生，
- * 若 ID 随机，前端每次刷新都是"新预警"，工单与通知将永远对不上。
- * 3. 可解释 —— 每条预警带 ruleKey / ruleLabel / reason，用户能看懂"它为什么出现"。
- * 4. 同一城市只出一条 —— 命中多条时保留最严重的，被抑制的规则记在 suppressed 里便于排查。
+ * 预警 ID 由（台风、城市、规则）确定生成，接口每次实时派生，
+ * 工单与通知据此稳定关联到同一条预警。
+ * 每条预警带 ruleKey / ruleLabel / reason；同一城市命中多条规则时
+ * 只保留最严重的，其余记在 suppressed 里。
  */
 
 const { haversineKm, nearestApproach, ringHit } = require('../lib/geo')
@@ -24,10 +22,7 @@ const LEVEL_LABEL = {
   blue: '蓝色预警'
 }
 
-/**
- * 风圈命中规则。
- * 由 lib/geo.ringHit() 判定（12 级最小、由内向外取最高），此处只提供展示元数据。
- */
+/** 风圈命中规则，命中判定由 lib/geo.ringHit() 完成，这里只提供展示元数据 */
 const RING_RULES = [
   { key: 'RING_12', label: '12 级风圈命中', describe: '城市到台风路径最近距离 ≤ 12 级风圈半径', level: 'red' },
   { key: 'RING_10', label: '10 级风圈命中', describe: '城市到台风路径最近距离 ≤ 10 级风圈半径', level: 'orange' },
@@ -63,7 +58,7 @@ const DISTANCE_RULES = [
 function pressureEscalation(near, typhoon) {
   const r7 = positiveNum(typhoon.radius7)
   const pressure = num(typhoon.pressure)
-  // 气压缺失（而非极低）不能触发升级：Number(null) === 0 会让它"看起来像 0hPa"
+  // 气压缺失时不参与升级判定
   if (pressure === null) return null
   if (r7 === null) return null
   if (pressure > 950) return null

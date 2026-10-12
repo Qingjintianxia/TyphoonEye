@@ -17,7 +17,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import L from 'leaflet'
-// 底图创建统一走 config/map.js，本组件不再自行拼装 tileLayer
+// 底图由 config/map.js 创建
 import { HAS_COMPLIANT_MAP, MAP_ATTRIBUTION, createBaseTileLayers } from '../config/map'
 import { compareColor } from '../constants/typhoon'
 
@@ -71,7 +71,7 @@ function render() {
     })
   })
 
-  // 自动把所有路径纳入视野，避免手工设定中心与层级时部分路径跑出屏幕
+  // 自动把所有路径纳入视野
   if (bounds.length) {
     map.fitBounds(L.latLngBounds(bounds), { padding: [30, 30] })
   }
@@ -82,7 +82,7 @@ function initMap() {
     center: [22, 125],
     zoom: 5,
     zoomControl: true,
-    // 版权信息由 .cm-attribution 以项目风格渲染，关闭原生控件避免重复显示
+    // 版权信息由 .cm-attribution 渲染，关闭原生控件
     attributionControl: false
   })
 

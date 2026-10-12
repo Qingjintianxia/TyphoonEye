@@ -160,7 +160,7 @@ const alertCount = computed(() =>
 )
 const authReady = computed(() => !!authStore.user)
 
-/** 未闭环工单数：只取统计接口，不拉全量列表，避免布局层产生不必要的数据加载 */
+/** 未闭环工单数，只取统计接口，不拉全量列表 */
 const openTicketCount = computed(() => {
   const s = ticketStore.stats
   if (!s?.byStatus) return 0
@@ -183,9 +183,7 @@ onMounted(() => {
   timer = setInterval(updateTime, 1000)
   document.addEventListener('click', handleClickOutside)
 
-  // 兜底：布局层只应在已登录态下发数据请求。
-  // 无有效 token 时静默跳过（时钟与事件监听照常初始化），
-  // 避免抢跑请求打出 401 并触发"登录已过期"误报。
+  // 无有效 token 时跳过数据请求，时钟与事件监听照常初始化
   if (!isTokenValid()) return
 
   authStore.fetchMe()

@@ -7,7 +7,7 @@ import { isTokenValid } from '../utils/token'
  * 认证 store
  *
  * 约定：登录/注册/拉取用户信息的错误由页面自行展示（表单内联错误），
- * 因此统一传 silent: true，避免请求层 Toast 与表单错误重复提示。
+ * 统一传 silent: true，错误提示由表单自己展示。
  */
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)

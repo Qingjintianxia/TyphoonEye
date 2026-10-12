@@ -3,15 +3,12 @@
  *
  * 用法：node scripts/dev-all.mjs （或 npm run dev:all）
  *
- * 为什么要这个脚本：
- * 1. 只起前端会导致所有 /api 请求 401，两个服务必须同时起来；
- * 2. 后端必须先就绪，否则前端首屏数据全空；
- * 3. 单 Ctrl+C 要能同时收掉两个进程，避免留下占用 3000/5173 的僵尸进程。
+ * 前后端需要同时启动：只起前端会导致 /api 请求 401，后端未就绪则首屏无数据。
  *
  * 约定：
  * - 子进程 stdout/stderr 原样透传并加前缀，便于区分来源；
- * - 收到 SIGINT/SIGTERM/exit 时统一回收子进程；
- * - 不做自动重启：崩溃要让用户看见，而不是被静默拉起。
+ * - 收到 SIGINT/SIGTERM/exit 时回收子进程；
+ * - 不做自动重启，崩溃直接暴露出来。
  */
 import { spawn } from 'node:child_process'
 import process from 'node:process'

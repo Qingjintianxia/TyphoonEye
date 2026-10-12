@@ -170,7 +170,7 @@ function toggle(id) {
     selectedIds.value = selectedIds.value.filter((v) => v !== id)
     return
   }
-  // 达到上限时静默忽略会在 UI 上表现为"点了没反应"，因此按钮已 disabled，这里再兜底
+  // 达到上限时按钮已 disabled，这里再拦截一次
   if (isFull.value) return
   selectedIds.value = [...selectedIds.value, id]
 }

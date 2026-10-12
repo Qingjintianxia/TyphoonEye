@@ -3,9 +3,9 @@
  *
  * 未读数采用轻量轮询（默认 60s），原因：用户已明确不做 WebSocket 实时化。
  * 三条节流约束：
- * 1. 页面不可见（document.hidden）时跳过，避免后台标签页空转打接口；
- * 2. 单飞：上一轮未结束不发起下一轮，避免慢网下请求堆积；
- * 3. 轮询失败静默降级，不弹 toast —— 角标不准不值得打断用户。
+ * 页面不可见（document.hidden）时跳过轮询。
+ * 上一轮未结束不发起下一轮。
+ * 轮询失败不弹 toast。
  */
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
@@ -54,7 +54,7 @@ export const useNotificationStore = defineStore('notification', () => {
     }
   }
 
-  /** 单条已读：成功后同步递减本地未读，避免角标要等下一轮轮询才更新 */
+  /** 单条已读：成功后同步递减本地未读数 */
   async function markRead(id) {
     try {
       await http.patch(`/notifications/${id}/read`)

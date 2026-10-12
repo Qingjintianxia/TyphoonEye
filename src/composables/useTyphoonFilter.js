@@ -3,16 +3,11 @@ import { SORT_OPTIONS, LEVEL_META, defaultSortOrder } from '../constants/typhoon
 import { parseTime } from '../utils/format'
 
 /**
- * 台风列表筛选 / 排序的单一来源。
- *
- * 设计要点：
- * 1. 视图只负责渲染控件与绑定条件，不得自行写 filter / sort —— 前序评审已吃过
- * "同一份逻辑散落 3–4 处"的亏。
- * 2. filterTyphoons 是纯函数，便于单测与在非组件环境复用。
- * 3. 空值一律按"缺失"处理并恒排末尾，绝不产生 NaN 破坏排序稳定性。
+ * 台风列表筛选与排序。视图只负责渲染控件与绑定条件，
+ * filterTyphoons 为纯函数，空值按缺失处理并排在末尾。
  */
 
-/** 默认筛选条件。每次调用返回新对象，避免多个消费者共享同一引用 */
+/** 默认筛选条件。每次调用返回新对象 */
 export function createDefaultQuery() {
   return {
     keyword: '',

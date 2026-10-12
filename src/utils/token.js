@@ -1,10 +1,8 @@
 /**
  * JWT 客户端解析工具
  *
- * 用途：路由守卫在放行前判断 token 是否已过期，避免"先进内页再被踢出"的闪烁。
- *
- * 重要：这里只做体验优化，不校验签名，不能替代服务端鉴权。
- * 真正的鉴权由 server/middleware/auth.js 完成，服务端返回 401 时由请求层兜底。
+ * 路由守卫在放行前判断 token 是否过期。这里不校验签名，
+ * 真正的鉴权由 server/middleware/auth.js 完成。
  */
 import { getToken } from './request'
 

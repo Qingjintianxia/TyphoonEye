@@ -253,7 +253,7 @@ async function loadRelated(id) {
 const typhoon = computed(() => typhoonStore.currentTyphoon)
 
 /**
- * 路径回放：状态与定时器统一由 usePathPlayer 持有。
+ * 路径回放：状态与定时器由 usePathPlayer 持有。
  * 解构成顶层 ref，模板中才能自动解包。
  */
 const {
@@ -295,7 +295,7 @@ async function load(id) {
   try {
     await typhoonStore.fetchTyphoonById(id)
   } catch {
-    // 错误文案由 store / 请求层处理，这里保证 loading 态回归
+    // 错误文案由 store / 请求层处理，这里复位 loading
   }
   // 工单列表用于判断"已建单"，用户列表用于负责人下拉；两者失败都只影响建单入口
   ticketStore.fetchTickets().catch(() => {})

@@ -5,8 +5,8 @@ const path = require('path')
 const crypto = require('crypto')
 
 /**
- * 集中配置：所有环境相关量（密钥、端口、CORS、限流）一律从 process.env 读取，
- * 源码中不出现任何密钥/凭证字面量。无 dotenv 依赖，自带极简 .env 解析。
+ * 集中配置：密钥、端口、CORS、限流等环境相关量从 process.env 读取。
+ * 无 dotenv 依赖，自带极简 .env 解析。
  */
 
 // 极简 .env 解析：存在则读取并补全未设置的变量，缺省或解析失败不阻断启动
@@ -34,9 +34,8 @@ loadEnvFile()
 const isProd = process.env.NODE_ENV === 'production'
 
 /**
- * JWT 密钥策略：
- * - 生产环境缺失 → 启动即失败（fail-fast），绝不回退到默认密钥。
- * - 开发环境缺失 → 生成一次性随机密钥并显著告警（重启失效，仅本地联调）。
+ * 生产环境缺少 JWT_SECRET 时直接退出，不使用默认密钥；
+ * 开发环境缺失则生成一次性随机密钥并告警，重启即失效。
  */
 function resolveJwtSecret() {
   if (process.env.JWT_SECRET) return process.env.JWT_SECRET

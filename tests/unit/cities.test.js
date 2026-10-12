@@ -3,8 +3,7 @@
 /**
  * 城市坐标表单元测试
  *
- * 别名映射一旦漏掉，「香港」就会查不到坐标 —— 这不会报错，
- * 而是让规则引擎静默跳过该城市（假阴性），是最难发现的一类 bug。
+ * 别名映射漏掉时「香港」会查不到坐标，规则引擎会跳过该城市。
  */
 const test = require('node:test')
 const assert = require('node:assert/strict')

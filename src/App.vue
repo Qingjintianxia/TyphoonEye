@@ -28,7 +28,7 @@ const routeReady = computed(() => !!route.name)
 /** 未就绪时按游客页处理：只渲染 router-view（此时它渲染为空），不套布局 */
 const isGuestPage = computed(() => !routeReady.value || !!route.meta.guest)
 
-// 全局错误边界：捕获子组件渲染/生命周期异常，避免整页白屏
+// 全局错误边界，捕获子组件渲染与生命周期异常
 onErrorCaptured((err) => {
   console.error('[app] 组件异常：', err)
   toast.error('页面出现异常，已拦截，请刷新重试')

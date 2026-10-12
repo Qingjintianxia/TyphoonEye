@@ -11,7 +11,7 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 // 按需引入而非 `import * as echarts`：全量包会让本 chunk 膨胀到 1MB+。
 // 本项目只用柱/线/饼三类图 + tooltip/legend/grid 三个组件，按需注册即可。
-// 新增图表类型时，必须在此同步注册，否则对应 series 会静默不渲染。
+// 新增图表类型时需在此注册，未注册的 series 不会渲染
 import * as echarts from 'echarts/core'
 import { BarChart, LineChart, PieChart } from 'echarts/charts'
 import {

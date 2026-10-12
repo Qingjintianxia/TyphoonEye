@@ -21,7 +21,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import L from 'leaflet'
-// 底图创建统一走 config/map.js，本组件不再自行拼装 tileLayer
+// 底图由 config/map.js 创建
 import { HAS_COMPLIANT_MAP, MAP_ATTRIBUTION, createBaseTileLayers } from '../config/map'
 import { warningColor, levelColor } from '../constants/typhoon'
 
@@ -102,7 +102,7 @@ function render() {
     )
   })
 
-  // 非回放态才画台风当前位置标记，避免与回放当前点重叠
+  // 非回放态才画台风当前位置标记
   if (!replaying && t.latitude != null && t.longitude != null) {
     layers.push(
       L.circleMarker([t.latitude, t.longitude], {
@@ -116,7 +116,7 @@ function render() {
   }
 
   // 风圈：真实地理比例（km → 米），回放时随当前点移动。
-  // 局限说明：mock 的 path 无逐点风圈数据，故半径仍取台风级 radius7/10/12。
+  // mock 的 path 无逐点风圈数据，半径取台风级 radius7/10/12
   const rp = replaying ? path[idx] : null
   const ringCenter =
     rp && rp.lat != null && rp.lng != null ? [rp.lat, rp.lng] : center
@@ -166,7 +166,7 @@ function applyFocus() {
       iconSize: [12, 12],
       iconAnchor: [6, 6]
     }),
-    // 压过风圈与路径点，保证标记始终可见
+    // 标记层级高于风圈与路径点
     zIndexOffset: 1000
   }).addTo(map)
   marker.bindTooltip(`${c.name}`, { direction: 'top', className: 'city-focus-tip' })
@@ -180,7 +180,7 @@ function initMap() {
     center: [22, 125],
     zoom: 5,
     zoomControl: true,
-    // 版权信息由 .dm-attribution 以项目风格渲染，关闭原生控件避免重复显示
+    // 版权信息由 .dm-attribution 渲染，关闭原生控件
     attributionControl: false
   })
 

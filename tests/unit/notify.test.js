@@ -4,7 +4,7 @@
  * 消息服务单元测试
  *
  * 核心是广播消息的按人已读：readBy 是数组而非布尔。
- * 若退化成布尔，A 点"全部已读"会把 B 的消息也标记为已读 —— 这在集成测试里很容易漏掉。
+ * readBy 按人记录已读，A 点“全部已读”不会把 B 的消息也标记为已读。
  */
 const test = require('node:test')
 const assert = require('node:assert/strict')

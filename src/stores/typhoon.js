@@ -37,7 +37,7 @@ export const useTyphoonStore = defineStore('typhoon', () => {
       lastUpdatedAt.value = Date.now()
       return typhoons.value
     } catch (e) {
-      // 401 由请求层统一跳转，此处不展示通用错误文案
+      // 401 由请求层跳转，此处不展示通用错误文案
       if (!e?.isUnauthorized) error.value = e?.message || '台风数据加载失败'
       throw e
     } finally {
@@ -65,7 +65,7 @@ export const useTyphoonStore = defineStore('typhoon', () => {
     }
   }
 
-  /** 离开详情页时调用，避免二次进入闪现旧数据 */
+  /** 离开详情页时调用，清除缓存数据 */
   function clearCurrent() {
     currentTyphoon.value = null
     error.value = ''

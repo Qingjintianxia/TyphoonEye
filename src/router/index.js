@@ -64,7 +64,7 @@ const routes = [
     meta: { title: '路径对比', icon: 'compare' }
   },
   {
-    // catch-all：任意未匹配路径进入 404，避免出现空白页
+    // catch-all：未匹配路径进入 404
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../views/NotFound.vue'),
@@ -94,7 +94,7 @@ router.beforeEach((to) => {
   }
 
   // 受保护页面：不仅要求 token 存在，还要求未过期。
-  // 过期 token 在此处即被拦截，避免"先进内页再被踢出"造成的闪烁。
+  // 过期 token 在此拦截
   if (!isTokenValid()) {
     setToken('')
     return { path: '/login', query: to.fullPath !== '/' ? { redirect: to.fullPath } : {} }

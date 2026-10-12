@@ -133,7 +133,7 @@ function locateCity(city) {
   focusSeq.value += 1
 }
 
-// 深链：/monitor?focus=城市名 —— 预警中心没有地图，点击城市时跳过来并定位
+// 深链：/monitor?focus=城市名，预警中心点击城市时跳过来定位
 onMounted(() => {
   const name = typeof route.query.focus === 'string' ? route.query.focus : ''
   if (!name) return

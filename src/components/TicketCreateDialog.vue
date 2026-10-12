@@ -70,7 +70,7 @@ const emit = defineEmits(['close', 'created'])
 const ticketStore = useTicketStore()
 const form = reactive({ title: '', assignee: '', description: '' })
 
-// 每次打开都以当前预警重新预填，避免残留上一次的输入
+// 每次打开都以当前预警重新预填
 watch(
   () => [props.open, props.alert],
   ([isOpen, alert]) => {
@@ -105,7 +105,7 @@ async function submit() {
     emit('created', ticket)
     emit('close')
   } catch (e) {
-    // 失败文案由请求层统一 toast，这里只保证弹窗不关闭，用户可修正后重试
+    // 失败时弹窗保持打开，用户可修正后重试
     console.warn('[ticket] 建单失败：', e)
   }
 }

@@ -127,7 +127,7 @@ const STATUS_OPTIONS = [
   { key: 'historical', label: '已结束' }
 ]
 
-/** 把 6 位 hex 转 rgba，用于 chip 选中态底色（色值一律来自常量层，不写字面色） */
+/** 把 6 位 hex 转 rgba，用于 chip 选中态底色 */
 function rgba(hex, alpha) {
   const h = String(hex || '').replace('#', '')
   const full = h.length === 3 ? h.split('').map((c) => c + c).join('') : h
@@ -170,7 +170,7 @@ function clearFilters() {
   })
 }
 
-// 搜索防抖 200ms：避免每输入一个字符就重算整表
+// 搜索防抖 200ms
 const kwInput = ref(props.query.keyword || '')
 let timer = null
 

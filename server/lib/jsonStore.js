@@ -1,23 +1,16 @@
 'use strict'
 
 /**
- * JSON 文件持久层
+ * JSON 文件持久层，供 users / tickets / notifications 共用。
  *
- * users / tickets / notifications 都需要"读 JSON → 改 → 原子写"，
- * 若各写一份就会出现多份重复实现，此处统一收口。
- *
- * 适用边界：
- * - 写锁是单进程内的一条 Promise 链，够用于本系统的内存 + JSON 文件存储。
- * - 多实例 / 集群部署时该锁无效，必须换成数据库事务或分布式锁。已在下方 mutate 注释中标注。
+ * 写锁是单进程内的一条 Promise 链。多实例或集群部署时该锁无效，
+ * 需要换成数据库事务或分布式锁。
  */
 
 const fs = require('fs')
 const path = require('path')
 
-/**
- * 读取集合。文件不存在、为空或解析失败都返回 fallback ——
- * 脏数据或首次启动不应让接口 500（P0 阶段 users.json 冷启动 500 就是这类坑）。
- */
+/** 读取集合。文件不存在、为空或解析失败都返回 fallback */
 function read(file, fallback = []) {
   try {
     const raw = fs.readFileSync(file, 'utf-8')
@@ -46,7 +39,7 @@ function readObject(file, fallback = {}) {
   }
 }
 
-/** 原子写：先落 .tmp 再 rename，避免半写损坏 */
+/** 原子写：先落 .tmp 再 rename，不直接覆盖目标文件 */
 function write(file, data) {
   fs.mkdirSync(path.dirname(file), { recursive: true })
   const tmp = `${file}.tmp`

@@ -3,11 +3,7 @@ import { parseTime } from './format'
 /**
  * 地理计算工具
  *
- * 统一约定：
- * 1. 所有函数对非法输入返回 null，绝不返回 NaN 或 0 这种"看起来像结果"的错误值
- * （算错的距离比没有距离更危险）。
- * 2. 使用 haversine 球面距离，不用平面欧氏距离——台风影响常跨 10 个经度以上，
- * 平面近似误差不可接受。
+ * 非法输入返回 null，距离用 haversine 球面公式计算。
  */
 
 const EARTH_RADIUS_KM = 6371
@@ -17,12 +13,8 @@ function toRad(deg) {
 }
 
 /**
- * 数值解析。
- *
- * 不能直接 `Number(v)`：Number(null) / Number('') / Number([]) / Number(false)
- * 全都是 0，缺失坐标会被当成"赤道与本初子午线交点"参与计算，
- * 得到一个看起来完全正常的巨大距离，进而让影响评估判成"无风险"。
- * 错误的距离比没有距离更危险，所以必须在此拦截。
+ * 数值解析。null、空串、布尔值、对象与 NaN 都返回 null，
+ * 其余情况转成有限数字返回。
  */
 function num(v) {
   if (v === null || v === undefined) return null
@@ -59,10 +51,8 @@ export function haversineKm(lat1, lng1, lat2, lng2) {
 }
 
 /**
- * 沿路径求最近点。
- *
- * 这是本模块的核心价值：只看"当前中心距离"会误导——
- * 台风可能昨天更近（已过境）或明天更近（尚未到达）。
+ * 沿路径求最近点。台风可能已经过境或尚未到达，
+ * 最近距离未必出现在当前中心位置。
  *
  * @returns {{distanceKm:number,index:number,point:object}|null}
  */
@@ -84,10 +74,7 @@ export function nearestApproach(path, lat, lng) {
   return best
 }
 
-/**
- * 风圈命中判定。风圈是同心圆且 12 级最小，
- * 因此由内向外检查，第一个命中的就是最高级别。
- */
+/** 风圈命中判定。风圈为同心圆，12 级最小，由内向外第一个命中的即最高级别 */
 export function ringHit(distanceKm, typhoon) {
   const d = num(distanceKm)
   if (d === null || !typhoon) return null
@@ -142,9 +129,7 @@ export const RISK_LEVELS = {
 }
 
 /**
- * 风险定级。
- * 兜底：三级风圈半径全部缺失时（如弱热带风暴），退化为距离阈值，
- * 避免出现"没风圈数据就永远显示无风险"的假阴性。
+ * 风险定级。三级风圈半径都缺失时（如弱热带风暴）改按距离阈值判定。
  */
 export function assessRisk(nearestKm, typhoon) {
   const d = num(nearestKm)

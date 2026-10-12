@@ -92,7 +92,7 @@ async function loadStats() {
     const data = await http.get('/statistics')
     stats.value = { ...stats.value, ...(data || {}) }
   } catch (e) {
-    // 401 由请求层统一跳转，不展示通用错误文案
+    // 401 由请求层跳转，不展示通用错误文案
     if (!e?.isUnauthorized) error.value = e?.message || '统计概览加载失败'
   } finally {
     loading.value = false

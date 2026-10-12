@@ -115,7 +115,7 @@ async function openItem(item) {
 }
 
 onMounted(() => {
-  // 进入页面即拉一次列表，保证离开再回来时角标与列表一致
+  // 进入页面即拉一次列表
   refresh()
 })
 </script>

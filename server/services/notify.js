@@ -1,10 +1,7 @@
 'use strict'
 
 /**
- * 消息中心服务
- *
- * 职责：把"发生了什么"翻译成"该告诉谁"。
- * 工单模块只负责业务动作，通知归这里管 —— 职责分离，互不污染。
+ * 消息中心服务，把业务动作翻译成该发给谁的通知。
  */
 
 const jsonStore = require('../lib/jsonStore')
@@ -47,7 +44,7 @@ function newId() {
  */
 async function push(payload) {
   const userId = payload.userId === undefined ? null : payload.userId
-  // 自己触发的事件不发给自己 —— 否则用户会被自己的操作刷屏
+  // 自己触发的事件不通知自己
   if (userId && payload.actor && userId === payload.actor) return null
 
   const notification = {
@@ -69,10 +66,7 @@ async function push(payload) {
   return notification
 }
 
-/**
- * 业务侧调用的非阻断版本：通知写失败只告警，绝不让工单主流程回滚。
- * 工单已经流转成功却因通知失败而报错，是本末倒置。
- */
+/** 非阻断版本：通知写失败只记告警，不影响业务主流程 */
 async function pushSafe(payload) {
   try {
     return await push(payload)
@@ -88,7 +82,7 @@ function isVisible(notification, username) {
   return notification.userId === null || notification.userId === username
 }
 
-/** 是否已读（广播消息按人记录，故用 readBy 数组而非布尔） */
+/** 是否已读。广播消息按人记录已读状态，用 readBy 数组 */
 function isRead(notification, username) {
   return Array.isArray(notification.readBy) && notification.readBy.includes(username)
 }

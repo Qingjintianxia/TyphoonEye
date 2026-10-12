@@ -56,7 +56,7 @@ export const useAlertStore = defineStore('alert', () => {
 
   /**
    * 列表接口除 data 外还返回 breakdown（人工/规则分项），
-   * 因此这里用 raw 拿完整响应体自行解包 —— 不能为了省事丢弃 breakdown。
+   * 这里用 raw 拿完整响应体自行解包，保留 breakdown 字段。
    */
   async function fetchAlerts(level = '', extraParams = {}) {
     loading.value = true
@@ -82,7 +82,7 @@ export const useAlertStore = defineStore('alert', () => {
 
   /**
    * 预警推送：assignee 为空表示全体广播。
-   * 注意后端是 code:400 的业务失败而非 HTTP 400，raw 解包后自行判定。
+   * 后端业务失败返回 code:400 而非 HTTP 400，raw 解包后自行判定。
    */
   async function dispatch(alertIds, assignee = '') {
     if (!Array.isArray(alertIds) || !alertIds.length) throw new Error('请选择要推送的预警')

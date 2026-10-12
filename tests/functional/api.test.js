@@ -43,7 +43,7 @@ const get = (url, token) => req('GET', url, { token })
 const post = (url, body, token) => req('POST', url, { token, body })
 const patch = (url, body, token) => req('PATCH', url, { token, body })
 
-/** 轮询直到服务可用；超时则明确失败，避免"卡住后一片绿"的假象 */
+/** 轮询直到服务可用，超时则失败 */
 async function waitReady(timeoutMs = 15000) {
   const deadline = Date.now() + timeoutMs
   while (Date.now() < deadline) {
@@ -115,7 +115,7 @@ test('注册 → 登录 → /auth/me → /auth/users 全链路', async () => {
   r = await get('/auth/me', token)
   assert.equal(r.body.code, 200)
   assert.equal(r.body.data.username, username)
-  // 密码哈希绝不下发
+  // 不下发密码哈希
   assert.equal(r.body.data.password, undefined)
 
   r = await get('/auth/users', token)
@@ -220,7 +220,7 @@ test('工单完整生命周期：建单 → 流转 → 意见 → 统计', async
   assert.equal(r.body.code, 400)
   assert.match(r.body.message, /已闭环/)
 
-  // 6) 闭环后仍可补充处置意见（复盘是真实需求）
+  // 6) 闭环后仍可补充处置意见
   r = await post(`/tickets/${ticket.id}/comments`, { content: '复盘：处置及时' }, token)
   assert.equal(r.body.code, 200)
   assert.equal(r.body.data.timeline.length, 4)

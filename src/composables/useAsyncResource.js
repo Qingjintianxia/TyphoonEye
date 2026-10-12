@@ -1,10 +1,7 @@
 /**
- * 异步资源统一封装
+ * 异步资源封装
  *
- * 解决三类问题：
- * 1. 页面各自维护 loading/error/data，写法不一、容易遗漏 error 渲染；
- * 2. 组件卸载后仍回调导致的状态更新与竞态（后发先至覆盖新数据）；
- * 3. 缺少"重试"入口。
+ * 统一管理 loading / error / data，处理卸载后的回调与请求竞态，并提供重试入口。
  *
  * 用法：
  * const { data, loading, error, run, retry } = useAsyncResource(() => http.get('/x'), { immediate: true })
@@ -19,7 +16,7 @@ export function useAsyncResource(fetcher, options = {}) {
   const error = ref('')
   const lastLoadedAt = ref(null)
 
-  // 请求序号：只接受最新一次请求的结果，避免竞态覆盖
+  // 请求序号：只接受最新一次请求的结果
   let seq = 0
   let aborted = false
 
@@ -35,7 +32,7 @@ export function useAsyncResource(fetcher, options = {}) {
       return result
     } catch (e) {
       if (aborted || current !== seq) throw e
-      // 鉴权失败由请求层统一跳转，此处不覆盖为通用错误文案
+      // 鉴权失败由请求层跳转，此处不改写错误文案
       error.value = e?.isUnauthorized ? '' : (e?.message || '数据加载失败')
       if (!silent) throw e
       return null

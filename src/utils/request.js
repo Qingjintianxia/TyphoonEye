@@ -1,12 +1,12 @@
 /**
  * 统一请求层
  *
- * 职责边界：
+ * 职责：
  * - 注入鉴权头、超时控制、错误解包
  * - 401 全局处理（清 token + 跳登录 + 提示），并发请求只触发一次
  * - 网络异常转为用户可读文案
  *
- * 业务代码禁止再使用裸 fetch。
+ * 业务代码不使用裸 fetch。
  */
 import { toast } from './toast'
 
@@ -57,7 +57,7 @@ async function redirectToLogin() {
     if (current?.meta?.guest) return
     router.push({ path: '/login', query: { redirect: current?.fullPath || '' } })
   } catch {
-    /* 路由未就绪时静默降级，由守卫兜底 */
+    /* 路由未就绪时不做跳转 */
   }
 }
 
@@ -98,7 +98,7 @@ async function request(method, path, options = {}) {
   const headers = { Accept: 'application/json' }
   const token = getToken()
   // 记录"本次请求是否携带 token"：401 时据此区分"从未登录"与"登录已过期"。
-  // 不能用 getToken() 重新取值判断——该值可能在请求飞行途中被并发的 401 处理清空。
+  // 不重新取 getToken()，该值可能在请求飞行途中已被清空
   const hadToken = !!token
   if (token) headers.Authorization = `Bearer ${token}`
   if (body !== undefined) headers['Content-Type'] = 'application/json'
@@ -111,10 +111,10 @@ async function request(method, path, options = {}) {
       signal: controller.signal
     })
 
-    // 401：统一处理，避免并发请求重复弹窗与跳转
+    // 401 统一处理，并发请求只提示一次
     if (res.status === 401) {
-      // 本次请求本就没带 token（未登录或抢跑请求）：静默失败，
-      // 登录跳转由路由守卫负责，不弹"登录已过期"误导用户
+      // 本次请求没带 token（未登录或抢跑请求）时不提示，
+      // 登录跳转由路由守卫负责
       if (!hadToken) {
         throw new ApiError('未登录', { code: 401, status: 401 })
       }
@@ -170,15 +170,14 @@ export const http = {
   put: (path, body, options) => request('PUT', path, { ...options, body }),
   patch: (path, body, options) => request('PATCH', path, { ...options, body }),
   del: (path, options) => request('DELETE', path, options),
-  /** 逃生舱：不参与统一解包与 toast，返回原始响应体 */
+  /** 返回原始响应体，不参与统一解包与 toast */
   raw: (method, path, options) => request(method, path, { ...options, raw: true })
 }
 
 export default http
 
 /**
- * 统一错误兜底，用于 catch 块中做局部降级。
- * 401 与网络错误已在 request 层提示过，此处默认不再重复弹窗。
+ * catch 块中的错误处理。401 与网络错误已在 request 层提示过，此处默认不再弹窗。
  */
 export function handleError(err, fallback = '操作失败，请稍后重试') {
   if (err instanceof ApiError) {

@@ -33,7 +33,7 @@ const props = defineProps({
   timeline: { type: Array, default: () => [] }
 })
 
-/** 时间正序：回溯语义下"最先发生什么"比"最近发生什么"更重要 */
+/** 时间正序展示 */
 const items = computed(() =>
   [...props.timeline].sort((a, b) => String(a.at || '').localeCompare(String(b.at || '')))
 )

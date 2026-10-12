@@ -173,7 +173,7 @@ router.patch('/:id/status', wrap(async (req, res) => {
       ...ticket,
       status,
       updatedAt: at,
-      // 闭环时若无人认领，视为创建者兜底处置，避免工单"无人负责却已闭环"
+      // 无人认领时记在发起人下
       assignee: ticket.assignee || (status === TICKET_STATUS.PROCESSING ? operator : ticket.assignee),
       timeline: [
         ...(ticket.timeline || []),
@@ -273,7 +273,7 @@ router.post('/:id/comments', wrap(async (req, res) => {
     )
   )
 
-  // 闭环工单也允许追加意见：复盘补充是真实需求
+  // 已闭环的工单仍可追加意见，便于复盘时补充
   res.json({ code: 200, data: updated, message: '已记录处置意见' })
 }))
 

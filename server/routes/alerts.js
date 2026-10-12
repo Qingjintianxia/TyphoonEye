@@ -8,10 +8,7 @@ const notify = require('../services/notify')
 
 const wrap = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 
-/**
- * 人工发布的预警：mock 静态数据，标注 source='manual'。
- * 与规则派生结果分区可辨，避免用户误以为是人工研判结论。
- */
+/** 人工发布的预警：mock 静态数据，标注 source='manual' */
 function manualAlerts() {
   return (alerts || []).map((a) => ({ ...a, source: 'manual' }))
 }
@@ -19,8 +16,8 @@ function manualAlerts() {
 router.get('/', (req, res) => {
   const { level, source, city, typhoonId } = req.query
 
-  // 派生预警：每次实时计算。ID 由 (台风, 城市, 规则) 确定性生成，
-  // 因此结果稳定，工单与通知才能稳定关联 —— 落盘反而会引入"数据陈旧"。
+  // 派生预警每次实时计算，ID 由（台风、城市、规则）确定性生成，
+  // 工单与通知据此稳定关联。
   const derived = deriveAlerts(typhoons)
 
   let result = [...manualAlerts(), ...derived]

@@ -1,25 +1,15 @@
 'use strict'
 
 /**
- * 服务端地理计算
- *
- * 与前端 src/utils/geo.js 为同源双份：服务端是 CommonJS 且不能 import 前端 ESM 模块，
- * 只能镜像一份。因此——改一侧必须同步另一侧，口径不一致会导致前后端结论打架。
- *
- * 统一约定（与前端一致）：
- * 1. 非法输入返回 null，绝不返回 0 / NaN —— 错误的距离比没有距离更危险。
- * 2. 用 haversine 球面距离，不用平面欧氏距离。
+ * 服务端地理计算，与前端 src/utils/geo.js 互为镜像，改一侧需同步另一侧。
+ * 非法输入返回 null，距离用 haversine 球面公式计算。
  */
 
 const EARTH_RADIUS_KM = 6371
 
 /**
- * 数值解析。
- *
- * 不能直接 `Number(v)`：Number(null) / Number('') / Number([]) / Number(false)
- * 全都是 0，缺失坐标会被当成"赤道与本初子午线交点"参与计算，
- * 得到一个看起来完全正常的巨大距离，进而让规则引擎静默跳过该城市。
- * 错误的距离比没有距离更危险，所以必须在此拦截。
+ * 数值解析。null、空串、布尔值、对象与 NaN 都返回 null，
+ * 其余情况转成有限数字返回。
  */
 function num(v) {
   if (v === null || v === undefined) return null

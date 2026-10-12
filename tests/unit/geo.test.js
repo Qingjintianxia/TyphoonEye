@@ -3,8 +3,7 @@
 /**
  * 地理计算单元测试
  *
- * 重点验证"铁律"：非法输入返回 null，绝不返回 0 / NaN。
- * 距离算错比没距离更危险 —— 它会让规则引擎静默产出错的预警。
+ * 验证非法输入返回 null，不返回 0 或 NaN。
  */
 const test = require('node:test')
 const assert = require('node:assert/strict')

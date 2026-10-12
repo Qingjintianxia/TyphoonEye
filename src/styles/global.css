@@ -131,7 +131,7 @@ body {
 
 /* 预警等级标签（全局工具类）
    原实现在 TyphoonTable / AlertPanel / AlertCenter / TyphoonMonitor 各自定义一份，
-   共 4 份重复。统一收敛到此处，组件只使用 .warn-tag + .warn-{level} 组合。 */
+   组件只使用 .warn-tag + .warn-{level} 组合。 */
 .warn-tag {
   display: inline-flex;
   align-items: center;
@@ -352,7 +352,7 @@ body {
 }
 
 /* ---------- 城市定位标记----------
-   详情页地图与监控页地图共用同一套样式，避免两处各写一份。
+   详情页地图与监控页地图共用同一套样式。
    标记由 divIcon 生成，类名见各组件的 createCityIcon()。 */
 .city-focus-marker {
   /* 容器尺寸由 Leaflet 控制，这里只放开溢出以便城市名显示在点右侧 */

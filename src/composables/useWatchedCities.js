@@ -5,10 +5,9 @@ import { findCity, allCities } from '../constants/cities'
  * 关注城市 + 本地持久化
  *
  * 容错原则：
- * 1. 读：JSON 解析失败、非数组、未收录城市一律丢弃，脏数据不得进入计算。
- * 2. 写：localStorage 不可用（隐私模式 / 配额满 / 非浏览器环境）时静默降级为
- * 纯内存态——功能照常可用，只是刷新后丢失。绝不因存储异常导致页面崩溃。
- * 3. 默认不预设关注城市，避免"替用户决定关注哪里"。
+ * 读：解析失败、非数组与未收录的城市一律丢弃。
+ * 写：localStorage 不可用时降级为纯内存态，刷新后丢失。
+ * 默认不预设关注城市。
  */
 
 const STORAGE_KEY = 'typhooneye.watchedCities'
@@ -29,7 +28,7 @@ function save(list) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
   } catch {
-    // 降级为内存态：不做任何提示，避免打扰用户
+    // 降级为内存态，不做提示
   }
 }
 

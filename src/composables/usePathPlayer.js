@@ -4,7 +4,7 @@ import { parseTime } from '../utils/format'
 /**
  * 台风路径回放状态机。
  *
- * 集中管理 index / playing / speed 与定时器，避免播放逻辑散落到各个组件。
+ * 管理 index / playing / speed 与定时器
  * 组件只负责渲染与转发事件。
  */
 
@@ -98,7 +98,7 @@ export function usePathPlayer(pathSource) {
     return found === -1 ? n - 1 : found
   }
 
-  // 路径数据变化（切换台风）时停止播放并把下标收敛到合法范围
+  // 切换台风时停止播放并把下标收敛到合法范围
   watch(total, (n) => {
     pause()
     if (index.value > n - 1) index.value = Math.max(0, n - 1)

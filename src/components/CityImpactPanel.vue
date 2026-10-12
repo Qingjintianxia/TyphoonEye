@@ -100,7 +100,7 @@ const props = defineProps({
 
 /**
  * 定位请求：带坐标则请求定位，未收录则只带 name 让父组件提示。
- * 绝不臆造坐标 —— 未收录城市定位过去等于给出错误的位置信息。
+ * 未收录的城市不做定位。
  */
 const emit = defineEmits(['locate'])
 
@@ -153,7 +153,7 @@ function locate(name) {
   emit('locate', city ? { ...city } : { name, missing: true })
 }
 
-/** 下拉切换城市时同步定位，避免"选了还要再点一次" */
+/** 下拉切换城市时同步定位 */
 function locateSelected() {
   locate(selectedCityName.value)
 }

@@ -1,8 +1,7 @@
 /**
  * 格式化工具集
  *
- * 统一约定：所有函数对 null / undefined / NaN 一律返回占位符 '—'，绝不抛异常。
- * 这是前端空值白屏问题的第一道防线。
+ * 函数对 null / undefined / NaN 返回占位符 ‘—’，不抛异常。
  */
 
 /** 空值占位符 */
@@ -14,8 +13,6 @@ function isBlank(v) {
 
 /**
  * 解析时间，兼容 'YYYY-MM-DD HH:mm' 与 ISO 8601 两种格式。
- * 原实现直接使用 new Date('2026-05-19 14:00')，在严格 ISO 环境下会得到 Invalid Date，
- * 导致预警排序失效（见 server/routes/alerts.js）。
  * @returns {Date|null}
  */
 export function parseTime(value) {
@@ -98,7 +95,7 @@ const DAY = 24 * HOUR
 
 /**
  * 相对时间：刚刚 / 12 分钟前 / 3 小时前 / 2 天前
- * 超过 7 天退回绝对日期，避免出现"213 天前"这类无信息量的文案。
+ * 超过 7 天退回绝对日期。
  */
 export function relativeTime(value) {
   const d = parseTime(value)
@@ -137,7 +134,7 @@ export function formatPercent(part, total, digits = 0) {
   return `${((part / total) * 100).toFixed(digits)}%`
 }
 
-/** 安全的数组长度读取，避免 undefined.length */
+/** 数组长度读取 */
 export function safeList(list) {
   return Array.isArray(list) ? list : []
 }

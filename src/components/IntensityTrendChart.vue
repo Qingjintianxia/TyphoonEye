@@ -128,7 +128,7 @@ function yOf(w) {
   return PLOT.bottom - ratio * (PLOT.bottom - PLOT.top)
 }
 
-/** 防止首尾标签溢出画布 */
+/** 首尾标签留出边距 */
 function clampX(x) {
   return Math.min(PLOT.right - 28, Math.max(PLOT.left + 4, x))
 }
@@ -155,7 +155,7 @@ const gridLines = computed(() => {
   return out
 })
 
-/** X 轴只展示 月-日 时:分，避免过长 */
+/** X 轴只展示 月-日 时:分 */
 function shortTime(value) {
   const d = parseTime(value)
   if (!d) return '—'

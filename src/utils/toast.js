@@ -2,7 +2,7 @@
  * 全局轻量提示（Toast）
  *
  * 设计为模块级响应式队列：任意模块（含 store、request 层）都可直接调用，
- * 无需传递组件实例。展示由 <ToastHost /> 统一渲染，在 App.vue 全局挂载一次。
+ * 展示由 <ToastHost /> 渲染，在 App.vue 全局挂载一次。
  */
 import { reactive } from 'vue'
 

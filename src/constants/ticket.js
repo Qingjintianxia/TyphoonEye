@@ -1,12 +1,10 @@
 /**
  * 工单与预警来源常量
  *
- * 同源双份：本文件是 `server/constants/ticket.js` 的 ESM 镜像。
- * 后端是 CommonJS，浏览器构建无法直接引用，故前端保留一份展示映射。
- * 改一侧必须同步另一侧，否则会出现"后端允许、前端不显示"的割裂。
+ * 本文件是 `server/constants/ticket.js` 的 ESM 镜像，改一侧需同步另一侧。
  *
- * 职责边界：这里只负责 label / badge / 可流转目标，不做业务裁决。
- * 状态流转的最终校验权在后端 canTransition()，前端禁用只是体验优化。
+ * 这里只负责 label / badge / 可流转目标，不做业务裁决。
+ * 状态流转以后端 canTransition() 为准，前端禁用按钮只是体验优化。
  */
 
 export const TICKET_STATUS = {
@@ -85,7 +83,7 @@ export function statusList() {
 
 /**
  * 当前状态允许流转到的目标状态列表。
- * UI 只渲染这些按钮；非法目标不出现，避免"点了才报错"。
+ * UI 只渲染这些按钮，非法目标不出现
  */
 export function nextStatuses(status) {
   return ALLOWED_TRANSITIONS[status] || []

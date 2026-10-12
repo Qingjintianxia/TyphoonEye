@@ -17,7 +17,7 @@ export default defineConfig({
       output: {
         // 第三方大依赖拆成独立 chunk：
         // 1) echarts / leaflet 体积大且很少变动，拆出后业务代码改动不会让用户重新下载它们；
-        // 2) 它们可被多个路由共享，避免各自打包一份。
+        // 2) 它们可被多个路由共享。
         manualChunks(id) {
           if (id.includes('node_modules/echarts') || id.includes('node_modules/zrender')) {
             return 'echarts'
